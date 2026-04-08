@@ -1,0 +1,35 @@
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+      - name: Build release ZIP
+        run: |
+          git archive --format=zip \
+            --prefix=tool_eledia_mailtemplates/ \
+            -o eledia-os-core.zip \
+            HEAD
+      - name: Verify ZIP structure
+        run: |
+          top=$(unzip -l eledia-os-core.zip | awk 'NR>3 {print $4}' | grep -v '^$' | cut -d/ -f1 | sort -u | head -1)
+          if [ "$top" != "tool_eledia_mailtemplates" ]; then
+            echo "ERROR: unexpected top-level dir: $top"
+            exit 1
+          fi
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Release ${{ github.ref_name }}"
+          files: eledia-os-core.zip
