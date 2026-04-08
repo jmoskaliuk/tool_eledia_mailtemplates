@@ -235,3 +235,198 @@ Each type:
 - Handling of HTML vs. plain text rendering
 - Whether a basic preview capability should be included in MVP
 - Strategy for handling changes in Moodle core notification behavior
+
+## feat02 Branding Configuration
+
+### Goal
+
+Enable administrators to define a consistent visual identity for all outgoing emails.
+
+---
+
+### Behavior
+
+- Administrators can configure global branding elements:
+  - logo (image)
+  - primary color
+  - footer content
+  - optional legal disclaimer
+
+- Branding is applied automatically to all templates
+- Branding is independent of notification types
+
+Edge cases:
+- If no branding is defined:
+  - a default minimal layout is used
+- If branding is partially defined:
+  - missing elements are omitted gracefully
+
+---
+
+### Non-goals
+
+- No full layout designer
+- No per-template layout customization
+- No responsive design configuration
+
+---
+
+### Decisions
+
+- Central branding ensures consistency
+- Separation from templates avoids duplication
+
+
+## feat03 Variable System
+
+### Goal
+
+Provide a controlled and predictable way to use dynamic data in templates.
+
+---
+
+### Behavior
+
+- Each notification type provides a predefined set of variables
+- Variables are inserted into templates using a defined syntax
+- Variables are resolved at runtime using Moodle data
+
+- Variables are grouped into:
+  - recipient data
+  - context data
+  - system data
+
+Edge cases:
+- Missing data results in empty output or fallback
+- Invalid variables are ignored or removed
+
+---
+
+### Non-goals
+
+- No arbitrary access to Moodle database fields
+- No user-defined variables in MVP
+- No scripting or logic in templates
+
+---
+
+### Decisions
+
+- Fixed variable sets ensure stability
+- Prevents security and performance issues
+
+## feat04 Template Management UI
+
+### Goal
+
+Provide an administrative interface to create and manage templates.
+
+---
+
+### Behavior
+
+- Admins can:
+  - create templates
+  - edit templates
+  - assign templates to notification types
+  - assign context scope
+
+- Templates include:
+  - subject
+  - body content
+
+- Templates can be activated/deactivated
+
+Edge cases:
+- inactive templates are ignored
+- incomplete templates are not applied
+
+---
+
+### Non-goals
+
+- No workflow (draft/publish)
+- No versioning
+- No collaboration features
+
+---
+
+### Decisions
+
+- Keep UI minimal for MVP
+- Focus on clarity over flexibility
+
+  ## feat05 Context-based Resolution
+
+### Goal
+
+Ensure correct template selection based on Moodle context hierarchy.
+
+---
+
+### Behavior
+
+- Templates can exist at:
+  - system level
+  - course level
+  - module level
+
+- Resolution order:
+  module > course > system
+
+Edge cases:
+- if multiple templates exist at same level:
+  - latest active template is used
+- if no template exists:
+  - fallback to Moodle default
+
+---
+
+### Non-goals
+
+- No complex priority rules
+- No manual ordering
+
+---
+
+### Decisions
+
+- Aligns with Moodle context model
+- Predictable behavior for admins
+
+  ## feat06 Controlled Core Override
+
+### Goal
+
+Override Moodle notifications in a safe and controlled way.
+
+---
+
+### Behavior
+
+- Only supported notification types can be overridden
+- Override is activated per template
+- No global interception of email sending
+
+- If override is active:
+  - template replaces core content
+- If not:
+  - core behavior remains unchanged
+
+Edge cases:
+- conflicting plugins:
+  - system does not interfere outside supported scope
+
+---
+
+### Non-goals
+
+- No interception of all emails
+- No modification of unrelated plugins
+
+---
+
+### Decisions
+
+- Explicit integration ensures compatibility
+- Prevents upgrade issues
