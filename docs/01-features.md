@@ -173,7 +173,14 @@ When a notification is triggered:
 
 #### Supported Notification Types (MVP)
 
-The system supports a limited predefined set of notification types.
+The system supports the following predefined notification types:
+
+1. **Password Reset** — Passwort-Zurücksetzen-Benachrichtigung
+2. **Course Enrolment** — Bestätigung bei Kurseinschreibung
+3. **Forum Posts** — Benachrichtigung über neue Forenbeiträge
+4. **Assignment Grading** — Benachrichtigung bei Aufgabenbewertung
+5. **User Registration Confirmation** — Bestätigung bei Benutzerregistrierung
+6. **Admin / Automated Notifications** — Manuelle Admin-E-Mails und automatische Systemmeldungen
 
 Each type:
 - has a defined set of variables
@@ -228,12 +235,16 @@ Each type:
 
 ---
 
+### Resolved Decisions
+
+- **Notification types for MVP:** Password Reset, Course Enrolment, Forum Posts, Assignment Grading, User Registration Confirmation, Admin/Automated Notifications (6 types)
+- **HTML vs. Plain Text:** HTML only — admin pflegt nur HTML, Plain Text wird automatisch generiert (strip_tags + Formatierung)
+- **Preview:** Live-Preview mit Beispieldaten im MVP enthalten
+- **Plugin Name:** `tool_eledia_mailtemplates` (bestätigt)
+
 ### Open Questions
 
-- Final list of supported notification types for MVP
 - Minimum required variable set per notification type
-- Handling of HTML vs. plain text rendering
-- Whether a basic preview capability should be included in MVP
 - Strategy for handling changes in Moodle core notification behavior
 
 ## feat02 Branding Configuration
@@ -336,6 +347,19 @@ Provide an administrative interface to create and manage templates.
   - body content
 
 - Templates can be activated/deactivated
+- Live-Preview with sample data is available in the editor
+
+#### HTML Strategy
+
+- Admin edits only HTML content
+- Plain text version is auto-generated (strip_tags + basic formatting)
+- No separate plain text editor
+
+#### Preview
+
+- Live-Preview renders the template with example data alongside the editor
+- Variables are resolved with realistic sample values
+- Branding is applied in preview
 
 Edge cases:
 - inactive templates are ignored
@@ -348,6 +372,7 @@ Edge cases:
 - No workflow (draft/publish)
 - No versioning
 - No collaboration features
+- No separate plain text editor
 
 ---
 
@@ -355,6 +380,8 @@ Edge cases:
 
 - Keep UI minimal for MVP
 - Focus on clarity over flexibility
+- **HTML only with auto-generated plain text** — reduces admin effort
+- **Live-Preview in MVP** — essential for usability when editing HTML templates
 
   ## feat05 Context-based Resolution
 

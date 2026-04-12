@@ -1,0 +1,33 @@
+{{!
+    Email wrapper template with branding.
+
+    @package    tool_eledia_mailtemplates
+    @copyright  2026 eLeDia GmbH {@link https://eledia.de}
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #333333; line-height: 1.6;">
+    {{#has_logo}}
+    <div style="text-align: center; padding: 20px 0; border-bottom: 3px solid {{primary_color}};">
+        <img src="{{logo_url}}" alt="" style="max-height: 60px; max-width: 200px;" />
+    </div>
+    {{/has_logo}}
+    {{^has_logo}}
+    <div style="border-bottom: 3px solid {{primary_color}}; padding: 10px 0;"></div>
+    {{/has_logo}}
+
+    <div style="padding: 24px 16px;">
+        {{{body_html}}}
+    </div>
+
+    {{#has_footer}}
+    <div style="border-top: 1px solid #dddddd; padding: 16px; font-size: 13px; color: #666666;">
+        {{{footer_content}}}
+    </div>
+    {{/has_footer}}
+
+    {{#has_disclaimer}}
+    <div style="padding: 8px 16px; font-size: 11px; color: #999999;">
+        {{{disclaimer}}}
+    </div>
+    {{/has_disclaimer}}
+</div>

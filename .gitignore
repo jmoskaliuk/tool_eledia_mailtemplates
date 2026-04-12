@@ -1,0 +1,18 @@
+# Composer
+/vendor/
+composer.lock
+
+# Node
+/node_modules/
+
+# Build artefacts (keep amd/build under version control)
+*.DS_Store
+.idea/
+.vscode/
+
+# Local deploy config
+.deploy/
+*.deploy.conf
+
+# PHPUnit local config
+phpunit.xml.local

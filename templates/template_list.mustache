@@ -1,0 +1,61 @@
+{{!
+    Template list overview page.
+
+    @package    tool_eledia_mailtemplates
+    @copyright  2026 eLeDia GmbH {@link https://eledia.de}
+    @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class="tool-eledia-mailtemplates-list">
+    <div class="mb-3">
+        <a href="{{create_url}}" class="btn btn-primary">
+            {{#str}} create_template, tool_eledia_mailtemplates {{/str}}
+        </a>
+        <a href="{{branding_url}}" class="btn btn-secondary ml-2">
+            {{#str}} manage_branding, tool_eledia_mailtemplates {{/str}}
+        </a>
+    </div>
+
+    {{#has_templates}}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>{{#str}} notificationtype, tool_eledia_mailtemplates {{/str}}</th>
+                <th>{{#str}} template_subject, tool_eledia_mailtemplates {{/str}}</th>
+                <th>{{#str}} template_active, tool_eledia_mailtemplates {{/str}}</th>
+                <th>{{#str}} actions {{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#templates}}
+            <tr>
+                <td>{{notification_type}}</td>
+                <td>{{subject}}</td>
+                <td>
+                    {{#active}}
+                        <span class="badge badge-success">{{#str}} yes {{/str}}</span>
+                    {{/active}}
+                    {{^active}}
+                        <span class="badge badge-secondary">{{#str}} no {{/str}}</span>
+                    {{/active}}
+                </td>
+                <td>
+                    <a href="{{edit_url}}" class="btn btn-sm btn-outline-primary">
+                        {{#str}} edit {{/str}}
+                    </a>
+                    <a href="{{delete_url}}" class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('{{#str}} template_confirm_delete, tool_eledia_mailtemplates {{/str}}');">
+                        {{#str}} delete {{/str}}
+                    </a>
+                </td>
+            </tr>
+            {{/templates}}
+        </tbody>
+    </table>
+    {{/has_templates}}
+
+    {{^has_templates}}
+    <div class="alert alert-info">
+        {{#str}} no_templates, tool_eledia_mailtemplates {{/str}}
+    </div>
+    {{/has_templates}}
+</div>

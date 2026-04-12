@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/eledia_mailtemplates/db" VERSION="2026041200"
+       COMMENT="XMLDB file for tool_eledia_mailtemplates">
+  <TABLES>
+    <TABLE NAME="tool_eledia_mt_templates" COMMENT="Email templates per notification type and context">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="notification_type" TYPE="char" LENGTH="100" NOTNULL="true"
+               COMMENT="Identifier for the notification type, e.g. password_reset"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+               COMMENT="Moodle context ID — 0 means system level"/>
+        <FIELD NAME="contextlevel" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="10"
+               COMMENT="CONTEXT_SYSTEM=10, CONTEXT_COURSECAT=40, CONTEXT_COURSE=50, CONTEXT_MODULE=70"/>
+        <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" DEFAULT=""/>
+        <FIELD NAME="body_html" TYPE="text" NOTNULL="true"
+               COMMENT="HTML body of the email template"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0"
+               COMMENT="1=active, 0=inactive"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_type_context" UNIQUE="false" FIELDS="notification_type, contextid"/>
+        <INDEX NAME="ix_active" UNIQUE="false" FIELDS="active"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_eledia_mt_branding" COMMENT="Global branding settings for email templates">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="primarycolor" TYPE="char" LENGTH="7" NOTNULL="true" DEFAULT="#000000"
+               COMMENT="Hex colour code for primary branding colour"/>
+        <FIELD NAME="footercontent" TYPE="text" NOTNULL="false"
+               COMMENT="HTML footer content"/>
+        <FIELD NAME="disclaimer" TYPE="text" NOTNULL="false"
+               COMMENT="Optional legal disclaimer text"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+        <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>
