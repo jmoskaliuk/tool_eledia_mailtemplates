@@ -124,6 +124,11 @@ class message_interceptor {
         // Build the variable data from the message and context.
         $data = self::build_variable_data($type, $message, $context);
 
+        // Check that all required variables are present. If not, fall back to default.
+        if (!notification_type::has_required_variables($type, $data)) {
+            return false;
+        }
+
         // Resolve variables in subject and body.
         $resolvedsubject = variable_resolver::resolve($template->subject, $data);
         $resolvedbody = variable_resolver::resolve($template->body_html, $data);

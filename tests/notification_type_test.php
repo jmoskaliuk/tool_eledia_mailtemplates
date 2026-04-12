@@ -135,6 +135,65 @@ class notification_type_test extends \advanced_testcase {
     }
 
     /**
+     * Test that each type has required variables defined.
+     */
+    public function test_get_required_variables_returns_array_for_all_types(): void {
+        foreach (notification_type::get_types() as $type => $stringkey) {
+            $required = notification_type::get_required_variables($type);
+            $this->assertIsArray($required, "No required variables for type '{$type}'");
+            $this->assertNotEmpty($required, "Empty required variables for type '{$type}'");
+            // Common required variables must always be present.
+            $this->assertContains('site_name', $required,
+                "Type '{$type}' missing common required variable 'site_name'");
+            $this->assertContains('recipient_firstname', $required,
+                "Type '{$type}' missing common required variable 'recipient_firstname'");
+        }
+    }
+
+    /**
+     * Test that required variables are a subset of available variables.
+     */
+    public function test_required_variables_are_subset_of_available(): void {
+        foreach (notification_type::get_types() as $type => $stringkey) {
+            $required = notification_type::get_required_variables($type);
+            $available = array_keys(notification_type::get_variables($type));
+            foreach ($required as $key) {
+                $this->assertContains($key, $available,
+                    "Type '{$type}': required variable '{$key}' is not in available variables");
+            }
+        }
+    }
+
+    /**
+     * Test has_required_variables returns true when all are present.
+     */
+    public function test_has_required_variables_true_when_complete(): void {
+        $data = notification_type::get_sample_data(notification_type::TYPE_PASSWORD_RESET);
+        $this->assertTrue(notification_type::has_required_variables(
+            notification_type::TYPE_PASSWORD_RESET, $data));
+    }
+
+    /**
+     * Test has_required_variables returns false when a required var is missing.
+     */
+    public function test_has_required_variables_false_when_incomplete(): void {
+        $data = notification_type::get_sample_data(notification_type::TYPE_PASSWORD_RESET);
+        unset($data['reset_url']);
+        $this->assertFalse(notification_type::has_required_variables(
+            notification_type::TYPE_PASSWORD_RESET, $data));
+    }
+
+    /**
+     * Test has_required_variables returns false when a required var is empty string.
+     */
+    public function test_has_required_variables_false_when_empty(): void {
+        $data = notification_type::get_sample_data(notification_type::TYPE_COURSE_ENROLMENT);
+        $data['course_fullname'] = '';
+        $this->assertFalse(notification_type::has_required_variables(
+            notification_type::TYPE_COURSE_ENROLMENT, $data));
+    }
+
+    /**
      * Test that get_type_names returns localised strings (not just keys).
      */
     public function test_get_type_names_returns_strings(): void {

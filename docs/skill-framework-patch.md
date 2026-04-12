@@ -71,6 +71,42 @@ sind nicht serialisierbar.
 **Fix:** Korrekter Pfad: `/var/www/site/moodle/public/admin/tool/phpunit/cli/init.php`
 **Prävention:** Bei Bitnami immer `public/` im Pfad berücksichtigen.
 
+#### ERR-086: PostgreSQL — role "root" does not exist auf self-hosted Runner
+
+**Symptom:** moodle-plugin-ci install schlägt fehl mit `FATAL: role "root" does not exist`.
+Alle nachfolgenden Checks scheitern mit `Not enough arguments (missing: "plugin")`.
+**Ursache:** Self-hosted Runner läuft als `root`. moodle-plugin-ci versucht sich als OS-User
+(`root`) bei PostgreSQL anzumelden, aber PostgreSQL kennt den Role `root` nicht.
+**Fix:** `--db-user=postgres` explizit in den Install-Step schreiben:
+```yaml
+run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-user=postgres
+```
+**Prävention:** Immer `--db-user=postgres` setzen wenn Services mit `POSTGRES_USER: postgres`
+laufen — nie auf OS-User-Fallback verlassen.
+
+#### ERR-087: GitHub Actions Workflow — nur workflow_dispatch, kein automatischer Trigger
+
+**Symptom:** CI läuft nie automatisch bei Push oder PR.
+**Ursache:** Workflow hat `on: workflow_dispatch` statt `on: push/pull_request`.
+**Fix:**
+```yaml
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+```
+**Prävention:** workflow_dispatch immer als zusätzlichen Trigger behalten (für manuellen Re-Run),
+aber nie als einzigen.
+
+#### ERR-088: Erster Push auf neuen Branch ohne upstream
+
+**Symptom:** `fatal: The current branch master has no upstream branch.`
+**Ursache:** Branch wurde noch nie gepusht, kein Tracking-Branch in origin.
+**Fix:** `git push --set-upstream origin master`
+**Prävention:** Einmalig nötig — danach reicht `git push`.
+
 #### ERR-084: Stale .git/index.lock auf gemountem Filesystem
 
 **Symptom:** `fatal: Unable to create '.git/index.lock': File exists` beim `git add`,

@@ -151,6 +151,51 @@ class notification_type {
     }
 
     /**
+     * Get the required (minimum) variables for a notification type.
+     *
+     * These variables MUST be resolvable at runtime for a template to be
+     * applied. If any required variable resolves to empty, the system
+     * falls back to Moodle default behaviour.
+     *
+     * Common required variables (all types): site_name, recipient_firstname.
+     *
+     * @param string $type The notification type identifier.
+     * @return array List of required variable keys.
+     */
+    public static function get_required_variables(string $type): array {
+        // Every type needs at least the site name and recipient first name.
+        $common = ['site_name', 'recipient_firstname'];
+
+        $specific = match ($type) {
+            self::TYPE_PASSWORD_RESET => ['reset_url'],
+            self::TYPE_COURSE_ENROLMENT => ['course_fullname', 'course_url'],
+            self::TYPE_FORUM_POST => ['post_subject', 'post_url', 'course_fullname'],
+            self::TYPE_ASSIGNMENT_GRADING => ['assignment_name', 'course_fullname'],
+            self::TYPE_USER_REGISTRATION => ['username', 'confirm_url'],
+            self::TYPE_ADMIN_NOTIFICATION => ['admin_message'],
+            default => [],
+        };
+
+        return array_merge($common, $specific);
+    }
+
+    /**
+     * Check whether all required variables are present and non-empty in a data set.
+     *
+     * @param string $type The notification type identifier.
+     * @param array $data The resolved variable data.
+     * @return bool True if all required variables have non-empty values.
+     */
+    public static function has_required_variables(string $type, array $data): bool {
+        foreach (self::get_required_variables($type) as $key) {
+            if (empty($data[$key])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Get sample data for preview rendering of a notification type.
      *
      * @param string $type The notification type identifier.

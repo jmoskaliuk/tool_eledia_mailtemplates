@@ -242,10 +242,56 @@ Each type:
 - **Preview:** Live-Preview mit Beispieldaten im MVP enthalten
 - **Plugin Name:** `tool_eledia_mailtemplates` (bestätigt)
 
+### Resolved: Minimum Required Variable Set
+
+Each notification type defines a set of **required variables** that must be resolvable
+at runtime. If any required variable is missing or empty, the system falls back to
+Moodle default behaviour — ensuring broken templates never produce broken emails.
+
+**Common required variables (all types):** `site_name`, `recipient_firstname`
+
+| Type | Additional required variables |
+|------|-------------------------------|
+| Password Reset | `reset_url` |
+| Course Enrolment | `course_fullname`, `course_url` |
+| Forum Post | `post_subject`, `post_url`, `course_fullname` |
+| Assignment Grading | `assignment_name`, `course_fullname` |
+| User Registration | `username`, `confirm_url` |
+| Admin Notification | `admin_message` |
+
+Implementation: `notification_type::get_required_variables()` and
+`notification_type::has_required_variables()`, checked in `message_interceptor::process_message()`.
+
+### Resolved: Strategy for Moodle Core Notification Changes
+
+Moodle may change, rename, or remove notification components/names between major versions.
+The plugin uses the following defensive strategy:
+
+1. **Explicit mapping** — Only messages listed in `message_interceptor::MESSAGE_MAP` are
+   intercepted. Unknown messages are silently ignored (no crash, no override).
+
+2. **Graceful degradation** — If a mapped Moodle message type no longer exists in a
+   future Moodle version, the hook/event listener simply never fires for that type.
+   Templates for that type remain in the database but are inert.
+
+3. **Version-gated map entries** — When adding support for messages that only exist in
+   certain Moodle versions, the `MESSAGE_MAP` may use `@since` annotations.
+   A future enhancement can add runtime version checks if needed.
+
+4. **Upgrade-time validation (planned post-MVP)** — `db/upgrade.php` can include a
+   step that checks `MESSAGE_MAP` entries against the installed Moodle's
+   `message_get_providers()` output and logs warnings for stale mappings.
+
+5. **Admin notification** — If a template references a notification type whose
+   Moodle message provider no longer exists, the admin UI should display a warning
+   badge (planned post-MVP).
+
+6. **Release notes** — Each plugin release explicitly lists which Moodle versions
+   and notification providers are supported.
+
 ### Open Questions
 
-- Minimum required variable set per notification type
-- Strategy for handling changes in Moodle core notification behavior
+*(none — all MVP decisions resolved 2026-04-12)*
 
 ## feat02 Branding Configuration
 

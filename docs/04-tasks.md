@@ -8,8 +8,7 @@ This is the operational center of the system.
 
 ## 🆕 New
 
-- Define minimum variable set per notification type
-- Define strategy for handling Moodle core notification changes
+*(none)*
 
 ---
 

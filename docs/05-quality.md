@@ -75,7 +75,23 @@ Umgebung: Docker (Bitnami Moodle), Moodle 4.5, PHP 8.2, MariaDB
 PHPUnit-Init-Pfad: `/var/www/site/moodle/public/admin/tool/phpunit/cli/init.php`
 
 ### test02 GitHub Actions CI — erster Push
-Status: pending (Push noch nicht abgeschlossen wegen .git/index.lock)
+Status: failed → fixed, neu gepusht am 2026-04-12
 Workflow: `.github/workflows/moodle-ci.yml`
-Matrix: Moodle 4.5/5.0 × PHP 8.1/8.3 × pgsql/mariadb (4 Zellen)
+Matrix: Moodle 4.5/5.0/main × PHP 8.1/8.3 × pgsql/mariadb (4 Zellen)
 Runner: self-hosted (Hetzner)
+
+Fehler im ersten Run (April 8):
+- `FATAL: role "root" does not exist` → self-hosted Runner läuft als root, PostgreSQL kennt die Role nicht
+- `Not enough arguments (missing: "plugin")` → Folge-Fehler weil Install gescheitert war
+- Trigger war nur `workflow_dispatch` → kein automatischer Lauf bei Push
+
+Fix (April 12):
+- `--db-user=postgres` zur Install-Step hinzugefügt
+- `on: push/pull_request` als Trigger gesetzt
+- MariaDB-Service-Container ergänzt
+- Git-Locks: `.git/HEAD.lock`, `.git/config.lock` → `rm -f` auf dem Mac nötig
+- Erster Push auf neuen Branch: `git push --set-upstream origin master`
+
+Stand 2026-04-12: Run #7 hängt seit Push im Status „queued".
+Self-hosted Runner (Hetzner) ist vermutlich offline oder nicht mehr registriert.
+→ Runner-Status auf Hetzner prüfen, ggf. neu starten oder GitHub-hosted Runner als Fallback konfigurieren.
